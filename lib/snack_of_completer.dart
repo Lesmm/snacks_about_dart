@@ -21,3 +21,36 @@ void start() async {
 
   SnackLogger.log('--------- all done ---------\n');
 }
+
+void main(List<String> arguments) async {
+  Completer completer = Completer();
+
+  () async {
+    await Future.delayed(Duration(seconds: 2));
+    SnackLogger.log(' ----------- completer done ------------ ');
+    completer.complete();
+  }();
+
+  Future f = completer.future;
+  f.then((value) {
+    print('1 done');
+  });
+
+  await Future.delayed(Duration(seconds: 5));
+  test(f);
+}
+
+void test(Future f) {
+  print('test come in');
+  f.then((value) {
+    print('2 done');
+  });
+
+  Future.wait([f]).then((value) {
+    print('wait done');
+  });
+
+  Future.wait([]).then((value) {
+    print('empty list future wait done');
+  });
+}

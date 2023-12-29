@@ -25,7 +25,40 @@ Future<int> getDataInner() async {
   return 1;
 }
 
-void main(List<String> arguments) {
+void testDelayThen(Future f) {
+  print('${DateTime.now()}>>>>>>>> test invoke or not???');
+  f.then((value) {
+    print('${DateTime.now()}>>>>>>>> test invoked!!!');
+    return 10086;
+  });
+}
+
+void main(List<String> arguments) async {
+  Future f = getData1();
+  Future ff = f.then((value) {
+    print('>>>>>>>> f then: $value');
+    return 66666;
+  });
+  Future fff = f.then((value) {
+    print('>>>>>>>> f then: $value');
+    return 77777;
+  });
+  f.then((value) {
+    print('>>>>>>>> f then: $value');
+    return 88888;
+  });
+  ff.then((value) {
+    print('>>>>>>>> ff then: $value');
+    return 'a';
+  });
+  fff.then((value) {
+    print('>>>>>>>> fff then: $value');
+    return 'b';
+  });
+  await Future.delayed(Duration(milliseconds: 2000));
+  testDelayThen(f);
+  return;
+
   Future f1 = getData1().then((value) => 333);
   Future f11 = getData1().then((value) async {
     await Future.delayed(Duration(milliseconds: 1000));

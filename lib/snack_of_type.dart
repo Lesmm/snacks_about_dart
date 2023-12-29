@@ -2,6 +2,50 @@ import 'dart:async';
 import 'dart:convert';
 
 void main(List<String> arguments) {
+  {
+    List<bool> list = [true, false];
+    pass(list);
+    List<bool?> listNullable = list as List<bool?>;
+    pass(listNullable);
+    listNullable = [false, null];
+    pass(listNullable);
+  }
+
+  startCheck();
+
+  {
+    print('checkType: value 1 ');
+    Map? checkVal1 = checkTypeIsMap<Map>({'key': 'value'});
+    print('checkType: value 2 ');
+    Map? checkVal2 = checkTypeIsMap<Map?>({'key': 'value'});
+
+    print('checkType: value 3 ');
+    List? checkVal3 = checkTypeIsMap<List>([]);
+    print('checkType: value 4 ');
+    List? checkVal4 = checkTypeIsMap<List?>([]);
+  }
+
+  {
+    print('checkType: value 1 ');
+    int? checkVal1 = checkTypeIsInt<int>(0);
+    print('checkType: value 2 ');
+    int? checkVal2 = checkTypeIsInt<int?>(null);
+
+    print('checkType: value 3 ');
+    List? checkVal3 = checkTypeIsInt<List>([]);
+    print('checkType: value 4 ');
+    List? checkVal4 = checkTypeIsInt<List?>([]);
+  }
+
+  print('checkType: dynamic 1 ');
+  int? checkVal1 = checkTypeIsInt<dynamic>(0);
+}
+
+void pass(List<bool?> list) {
+  print('########### pass: $list');
+}
+
+void startCheck() {
   start<List>();
   start<List?>();
   start<Map>();
@@ -63,3 +107,41 @@ void checkNum<T>() {
 void checkList<T>() {
   print('check $T == List ------>>>> ${T == List}');
 }
+
+T? checkTypeIsMap<T>(T value) {
+  print('checkType T is ------>>>> ${T.toString()}, null is T: ${null is T}');
+  if (isType<Map>(T)) {
+    print('checkType T is Map');
+  }
+  if (isNullableType<Map>(T)) {
+    print('checkType T is nullable Map');
+  }
+
+  if (isTypeIgnoreNull<T, Map>()) {
+    print('💯 is Map type ignore nullable');
+  }
+  return value;
+}
+
+T? checkTypeIsInt<T>(T value) {
+  print('checkType T is ------>>>> ${T.toString()}');
+  if (isType<int>(T)) {
+    print('checkType T is int');
+  }
+  if (isNullableType<int>(T)) {
+    print('checkType T is nullable int');
+  }
+  if (isNullableType<int?>(T)) {
+    print('checkType T is nullable int double-check');
+  }
+  return value;
+}
+
+bool isType<T>(Type type) => type == T;
+
+bool isNullableType<T>(Type type) => isType<T?>(type);
+
+
+bool isTypeOf<T, S>() => T == S;
+
+bool isTypeIgnoreNull<T, S>() => isTypeOf<T, S>() || isTypeOf<T, S?>() ;
